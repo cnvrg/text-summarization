@@ -1,0 +1,204 @@
+title: Text Summarize Train
+version: 1.0.0
+description: Generating the summary of articles given by the user after training a custom model
+long_description: User can choose to tune the training via changing of the hyper paramteres and even change the tokenizer that he/she wants to use
+
+author: "cnvrg"
+author_email: "libhub@cnvrg.io"
+
+tags:
+  - training
+tasks:
+  - title: S3 Connector
+    top: 300
+    left: 0
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: exec
+
+    # The library data
+    library: s3-connector
+    library_version: 1.0.0
+
+    # The flattened library parameters (in this case we have training library)
+    command: python s3-connector.py
+
+    requirements:
+      cpu: 3.5
+      memory: 8
+      gpu: 0
+      hpu: 0
+
+    image: cnvrg/cnvrg:v5.0
+    language: python3
+
+    # The "arguments" property changes to "params", rest remains the same.
+    # Params in the blueprint yaml can be used to override the arguments in the library.
+    params:
+      - key: endpoint
+        type: 'categorical'
+        values:
+          - 'http://s3.amazonaws.com download'
+      - key: bucketname
+        type: 'categorical'
+        values:
+          - 'blueprints-data'
+      - key: localdir
+        type: 'categorical'
+        values:
+          - '/cnvrg'
+      - key: prefix
+        type: 'categorical'
+        values:
+          - 'summarization/'
+  - title: wikipedia_connector
+    top: 400
+    left: 300
+
+    type: exec
+
+    # The library data
+    library: wikipedia-connector1
+    library_version: 1.0.0
+
+    command: python3 wiki.py
+
+    requirements:
+      cpu: 3.5
+      memory: 8
+      gpu: 0
+      hpu: 0
+
+    image: cnvrg:v5.0
+    language: python3
+    params:
+      - key: 'topics'
+        type: 'categorical'
+        values:
+          - "predator,alien,planet,earth"
+
+  - title: Train
+    top: 400
+    left: 300
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: exec
+
+    # The library data
+    library: text-summarization-train
+    library_version: 1.0.0
+
+    # The flattened library parameters (in this case we have training library)
+    command: python3 training_model_summary.py
+
+    requirements:
+      cpu: 3.5
+      memory: 8
+      gpu: 0
+      hpu: 0
+
+    image: cnvrg:v5.0
+    language: python3
+
+    # The "arguments" property changes to "params", rest remains the same.
+    # Params in the blueprint yaml can be used to override the arguments in the library.
+    params:
+      - key: 'training_file'
+        type: 'categorical'
+        values:
+          - '/input/s3-connector/summarization/wiki_lingua_file.csv'
+      - key: 'default_model'
+        type: 'categorical'
+        values:
+          - '/input/s3-connector/model_files/summarization/bart_large_cnn/'
+      - key: 'tokenizer'
+        type: 'categorical'
+        values:
+          - '/input/s3-connector/model_files/summarization/tokenizer_files/'
+      - key: 'train_rows'
+        type: 'discrete'
+        values:
+          - '100'
+      - key: 'encoder_max_length'
+        type: 'discrete'
+        values:
+          - '256'
+      - key: 'decoder_max_length'
+        type: 'discrete'
+        values:
+          - '64'
+      - key: 'label_smooth_factor'
+        type: 'discrete'
+        values:
+          - '0.1'
+      - key: 'weight_decay_factor'
+        type: 'discrete'
+        values:
+          - '0.1'
+      - key: 'train_batch'
+        type: 'discrete'
+        values:
+          - '2'
+      - key: 'eval_batch'    
+        type: 'discrete'
+        values:
+          - '2'
+      - key: 'warmup_step_size'    
+        type: 'discrete'
+        values:
+          - '50'
+
+  - title: Summarize
+    top: 400
+    left: 300
+
+    # Type must be according to the flow task conventions (data, exec, deploy)
+    type: exec
+
+    # The library data
+    library: text-summarize-predict
+    library_version: 1.0.0
+
+    # The flattened library parameters (in this case we have training library)
+    command: python3 generate_summary.py
+
+    requirements:
+      cpu: 3.5
+      memory: 8
+      gpu: 0
+      hpu: 0
+
+    image: cnvrg:v5.0
+    language: python3
+
+    # The "arguments" property changes to "params", rest remains the same.
+    # Params in the blueprint yaml can be used to override the arguments in the library.
+    params:
+      - key: 'input_path'
+        type: 'categorical'
+        values:
+          - '/input/wikipedia_connector/cnvrg/wiki_output.csv'
+      - key: 'modelpath'
+        type: 'categorical'
+        values:
+          - '/input/Train/My_Custom_Model/'
+      - key: 'tokenizer'
+        type: 'categorical'
+        values:
+          - '/input/s3-connector/model_files/summarization/tokenizer_files/'
+      - key: 'min_percent'
+        type: 'discrete'
+        values:
+          - '0.07'
+      - key: 'encoder_max_length'
+        type: 'discrete'
+        values:
+          - '256'
+
+relations:
+  - from: S3 Connector
+    to: Train
+  - from: wikipedia_connector
+    to: Summarize
+  - from: Train
+    to: Summarize

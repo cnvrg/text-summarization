@@ -1,0 +1,28 @@
+title: Wikipedia Connector1
+version: 1.0.0
+description: Extract cleaned text from any wikipedia article in the form of a CSV file
+icon: python
+
+author: "cnvrg"
+author_email: "info@cnvrg.io"
+
+tags:
+  - training
+
+command: python3 wiki.py
+
+requirements:
+  cpu: 3.5
+  memory: 8
+  gpu: 0
+  hpu: 0
+
+image: cnvrg:v5.0
+
+language: python3
+
+arguments:
+  - key: 'topics'
+    type: 'categorical'
+    values:
+      - "predator,alien,planet,earth"
