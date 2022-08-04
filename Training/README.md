@@ -1,10 +1,6 @@
 # Fine tuning a huggingface model for predicting summaries
 ## training_summarization
 
-[![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
-
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
-
 This library serves as a tool for fine-tuning a pretrained summarization model (for getting abstractive summarizations) on a pre-built dataset or a custom dataset given by the user. The dataset, wiki_lingua is actually referenced from huggingface library and contains upto 3,500 rows of articles and summaries, in English language. It’s up to the user to specify the number of rows on which they want to train their model. The dataset that the user can upload will look like this: -
 This library uses the following arguments: -
 
@@ -30,6 +26,9 @@ This library uses the following arguments: -
 ```
 cnvrg run  --datasets='[{id:"summarization_train_dataset",commit:"3fcfb99ec010d4a8ba364f43169465d91ca39ada"}]' --machine="default.Large,default.large - spot" --image=cnvrg:v5.0 --sync_before=false python3 training_model_summary.py --Trained_Model_Name my_custom_model --training_file summarization_train_dataset/wiki_lingua_file.csv --train_rows 80 --default_model /cnvrg/Model/bart_large_cnn_original_1/ --encoder_max_length 256 --decoder_max_length 64 --label_smooth_factor 0.1 --weight_decay_factor 0.1
 ```
+
+## Evaluation Metrics
+Although there are no hard and fast evaluation metrics, we have used a few inlcuding BLEUU score and ROUGE score.
 
 ### Model Used
 is a fine-tuned version of [bart_large_cnn](https://huggingface.co/facebook/bart-large-cnn) from [AutoModelSeq2Seq](https://huggingface.co/transformers/model_doc/encoderdecoder.html) class of [transformers](https://huggingface.co/transformers/) library. The function used is model.generate() and the summary length is restricted to 500 words as well and is always higher than 7% of the article length.

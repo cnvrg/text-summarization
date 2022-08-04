@@ -13,9 +13,38 @@ from transformers import (
 )
 import pathlib
 # Function to generate summaries
+import requests
 
+FILES_Model = ['config.json','pytorch_model.bin']
 
-def predict_1(text, model_cnvrg, tokenizer):
+FILES_Tokenizer = ['merges.txt','special_tokens_map.json','tokenizer.json','tokenizer_config.json','vocab.json']
+
+BASE_FOLDER_URL_Model = "https://libhub-readme.s3.us-west-2.amazonaws.com/model_files/summarization/bart_large_cnn"
+BASE_FOLDER_URL_Tokenizer = "https://libhub-readme.s3.us-west-2.amazonaws.com/model_files/summarization/tokenizer_files"
+
+def download_model_files():
+    """
+    Downloads the model files if they are not already present or pulled as artifacts from a previous train task
+    """
+    current_dir = str(pathlib.Path(__file__).parent.resolve())
+    for f in FILES_Model:
+        if not os.path.exists(current_dir + f'/{f}') and not os.path.exists('/input/compare/' + f):
+            print(f'Downloading file: {f}')
+            response = requests.get(BASE_FOLDER_URL_Model + f)
+            f1 = os.path.join(current_dir,f)
+            with open(f1, "wb") as fb:
+                fb.write(response.content)
+    for f2 in FILES_Tokenizer:
+        if not os.path.exists(current_dir + f'/{f2}') and not os.path.exists('/input/compare/' + f2):
+            print(f'Downloading file: {f2}')
+            response = requests.get(BASE_FOLDER_URL_Tokenizer + f2)
+            f11 = os.path.join(current_dir,f2)
+            with open(f11, "wb") as fb1:
+                fb1.write(response.content)
+
+download_model_files()
+
+def predict_summary(text, model_cnvrg, tokenizer):
     
     encoder_max_length = 256
 
@@ -90,10 +119,10 @@ def wikipedia1(text):
     input_list = []
     list2 = []
     disambiguation = 0
-    abc1 = WikiPage(str(text))
-    abc11 = abc1.get_wiki_page(str(text))[0]
-    input_list.append(abc11)
-    if(abc1.get_wiki_page(str(text))[1] == '1'):
+    wiki_text_content = WikiPage(str(text))
+    wiki_text_content1 = wiki_text_content.get_wiki_page(str(text))[0]
+    input_list.append(wiki_text_content1)
+    if(wiki_text_content.get_wiki_page(str(text))[1] == '1'):
         disambiguation = disambiguation + 1
     list2.append(str(text))
     return input_list[0]
@@ -111,12 +140,12 @@ def predict(data):
     tokenizer = AutoTokenizer.from_pretrained(tokenizer_address)
     response = {}
     if len(data) > 5:
-        summary_output = predict_1(data, model_cnvrg, tokenizer)
+        summary_output = predict_summary(data, model_cnvrg, tokenizer)
         response["summary"] = str(summary_output[0])
 
     else:
         text0 = wikipedia1(data)
-        summary_output = predict_1(text0, model_cnvrg, tokenizer)
+        summary_output = predict_summary(text0, model_cnvrg, tokenizer)
         response["summary"] = str(summary_output[0])
     return response
 

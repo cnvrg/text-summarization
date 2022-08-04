@@ -1,4 +1,4 @@
-title: Text Summarization Inference
+title: Text Summarization Inference1
 version: 1.0.0
 description: Generating the summary of articles given by the user
 long_description: Text Summarization is the process of reducing some text to a shorter and more concise version without distorting its meaning
@@ -16,7 +16,7 @@ tasks:
 
     type: deploy
 
-    library: summarization-inference
+    library: text-summarization-inference1
     library_version: 1.0.0
 
     command: python3 predict.py

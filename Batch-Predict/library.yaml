@@ -1,6 +1,6 @@
-title: Text Summarize Predict
+title: Text Summarization Batch
 version: 1.0.0
-description: Generating the summary of articles given by the user
+description: Generating the summary of articles given by the user using a pretrained model
 icon: python
 
 author: "cnvrg"
@@ -29,11 +29,11 @@ arguments:
   - key: 'modelpath'
     type: 'categorical'
     values:
-      - '/input/Train/My_Custom_Model/'
+      - '/input/s3_connector/model_files/summarization/bart_large_cnn/'
   - key: 'tokenizer'
     type: 'categorical'
     values:
-      - '/input/s3-connector/model_files/summarization/tokenizer_files/'
+      - '/input/s3_connector/model_files/summarization/tokenizer_files/'
   - key: 'min_percent'
     type: 'discrete'
     values:

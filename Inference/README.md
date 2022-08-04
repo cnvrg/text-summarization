@@ -1,10 +1,6 @@
 # Generating the summary of a single articles via a fine-tuned huggingface model
 ## Summarization Inference
 
-[![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
-
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
-
 This library serves as a tool for getting abstractive summarization of a single English article at a time, without training the model further or the summary of any article from Wikipedia, via its keywords. It uses a specific model trained by CNVRG on custom data (wiki_lingua dataset) and gives summaries of around 7% of the total article size. While running this library, the user needs to give the following parameter: -
 ## Arguments
 - `--data` refers to the paragraph, which needs to be summarized. Be careful to not introduce any apostrophes or other punctuation marks in the paragraph. It can also refer to a topic that you want the wikipedia summary of.

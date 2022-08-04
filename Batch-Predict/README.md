@@ -1,10 +1,6 @@
 # Generating the summary of articles via a fine-tuned huggingface model
 ## Predict_Summary
 
-[![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
-
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
-
 This library serves as a tool for getting abstractive summarization of English articles without training the model further. It uses a specific model trained by CNVRG on custom data (wiki_lingua dataset) and gives summaries of around 7% of the total article size. While running this library, the user needs to give the following parameters: -
 
 - `--input_path` refers to the name and path of the file which contains the articles. It would look similar to the **output_summaries_file** described in the readme of **wikipedia_connector** library. 
