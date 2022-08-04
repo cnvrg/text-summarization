@@ -117,7 +117,7 @@ tokenizer_path = args.tokenizer
 rows_cnt = args.train_rows
 sub1 = "train[:" + str(rows_cnt) + "]"
 input_doc = datasets.load_dataset(
-    "csv", data_files= args.training_file, split=(str(sub1))
+    "csv", data_files=args.training_file, split=(str(sub1))
 )
 model = AutoModelForSeq2SeqLM.from_pretrained(address_model_cnvrg)
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
@@ -128,6 +128,7 @@ label_smooth_factor = float(args.label_smooth_factor)
 train_batch = int(args.train_batch)
 eval_batch = int(args.eval_batch)
 warmup_step_size = int(args.warmup_step_size)
+
 
 def batch_tokenize_preprocess(batch, tokenizer, max_source_length, max_target_length):
     source, target = batch["document"], batch["summary"]
@@ -147,9 +148,10 @@ def batch_tokenize_preprocess(batch, tokenizer, max_source_length, max_target_le
 
 
 data = datasets.load_dataset(
-    "csv", data_files= args.training_file, split=(str(sub1))
+    "csv", data_files=args.training_file, split=(str(sub1))
 )
-train_data_txt, validation_data_txt = data.train_test_split(test_size=0.1).values()
+train_data_txt, validation_data_txt = data.train_test_split(
+    test_size=0.1).values()
 train_data = train_data_txt.map(
     lambda batch: batch_tokenize_preprocess(
         batch, tokenizer, encoder_max_length, decoder_max_length
@@ -190,7 +192,8 @@ def compute_metrics(eval_preds):
     decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
 
     # Some simple post-processing
-    decoded_preds, decoded_labels = postprocess_text(decoded_preds, decoded_labels)
+    decoded_preds, decoded_labels = postprocess_text(
+        decoded_preds, decoded_labels)
 
     result = metric.compute(
         predictions=decoded_preds, references=decoded_labels, use_stemmer=True
@@ -208,7 +211,7 @@ def compute_metrics(eval_preds):
 
 training_args = Seq2SeqTrainingArguments(
     output_dir="results",
-    num_train_epochs=1,  # demo
+    num_train_epochs=1,
     do_train=True,
     do_eval=True,
     per_device_train_batch_size=train_batch,
@@ -221,9 +224,6 @@ training_args = Seq2SeqTrainingArguments(
     logging_dir="logs",
     logging_steps=50,
     save_total_limit=3
-    #    push_to_hub=True,
-    #    hub_token = 'api_kaIZZmGhrNmPTdaOrqUupOASRqtLoHqzyX',
-    #    hub_model_id = "cnvrg/summarization"
 )
 data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
 
@@ -236,11 +236,11 @@ trainer = Seq2SeqTrainer(
     tokenizer=tokenizer,
     compute_metrics=compute_metrics,
 )
-evaluate_before = trainer.evaluate()  # type(evaluate_after)
+evaluate_before = trainer.evaluate()
 trainer.train()
 evaluate_after = trainer.evaluate()
 model.save_pretrained(address_model_user)
-print("Model is saved")  # input_doc['document'][7]
+print("Model is saved")
 metrics_file_name = "eval_metrics.csv"
 eval_metrics = pd.DataFrame(
     zip(
