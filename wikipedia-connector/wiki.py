@@ -48,7 +48,7 @@ class WikiPage:
             for paragraph in soup.find_all('p'):
                 text += paragraph.text
             cleaned_text = self.get_clean_text(text)
-            if(len(cleaned_text) < 50):
+            if(len(cleaned_text) < 100):
                 flag = 1
         else:
             cnt = 0
@@ -61,7 +61,7 @@ class WikiPage:
                 for paragraph in soup.find_all('p'):
                     text += paragraph.text                                       
                 cleaned_text = self.get_clean_text(text)
-                if(len(cleaned_text) > 50):
+                if(len(cleaned_text) > 100):
                     done = 1
                 else:
                     flag = 1

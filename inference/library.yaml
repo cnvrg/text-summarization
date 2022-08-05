@@ -26,6 +26,9 @@ arguments:
   accept_files: false
   file_name: predict.py
   function_name: predict
+  gunicorn_config:
+    - key: workers
+      value: '1'
   prep_file: ''
   prep_function: ''
   input_example:

@@ -17,7 +17,7 @@ tasks:
     type: exec
 
     # The library data
-    library: s3-connector3
+    library: s3-connector5
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -58,7 +58,7 @@ tasks:
     type: exec
 
     # The library data
-    library: wikipedia-connector3
+    library: wikipedia-connector4
     library_version: 1.0.0
 
     command: python3 wiki.py

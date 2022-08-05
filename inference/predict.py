@@ -13,14 +13,16 @@ from transformers import (
 )
 import pathlib
 import requests
+import shutil
+
 
 FILES_Model = ['config.json', 'pytorch_model.bin']
 
 FILES_Tokenizer = ['merges.txt', 'special_tokens_map.json',
                    'tokenizer.json', 'tokenizer_config.json', 'vocab.json']
 
-BASE_FOLDER_URL_Model = "https://libhub-readme.s3.us-west-2.amazonaws.com/model_files/summarization/bart_large_cnn"
-BASE_FOLDER_URL_Tokenizer = "https://libhub-readme.s3.us-west-2.amazonaws.com/model_files/summarization/tokenizer_files"
+BASE_FOLDER_URL_Model = "https://libhub-readme.s3.us-west-2.amazonaws.com/model_files/summarization/bart_large_cnn/"
+BASE_FOLDER_URL_Tokenizer = "https://libhub-readme.s3.us-west-2.amazonaws.com/model_files/summarization/tokenizer_files/"
 
 
 def download_model_files():
@@ -29,28 +31,43 @@ def download_model_files():
     """
     current_dir = str(pathlib.Path(__file__).parent.resolve())
     for f in FILES_Model:
-        if not os.path.exists(current_dir + f'/{f}') and not os.path.exists('/input/compare/' + f):
+        if not os.path.exists(current_dir + f'/{f}') and not os.path.exists('/input/Train/My_Custom_Model/' + f):
             print(f'Downloading file: {f}')
             response = requests.get(BASE_FOLDER_URL_Model + f)
             f1 = os.path.join(current_dir, f)
             with open(f1, "wb") as fb:
                 fb.write(response.content)
     for f2 in FILES_Tokenizer:
-        if not os.path.exists(current_dir + f'/{f2}') and not os.path.exists('/input/compare/' + f2):
+        if not os.path.exists(current_dir + f'/{f2}') and not os.path.exists('/input/Train/My_Custom_Model/' + f2):
             print(f'Downloading file: {f2}')
             response = requests.get(BASE_FOLDER_URL_Tokenizer + f2)
             f11 = os.path.join(current_dir, f2)
             with open(f11, "wb") as fb1:
                 fb1.write(response.content)
 
-
 download_model_files()
 
+def moving_files():
+    script_dir = pathlib.Path(__file__).parent.resolve()
+    model_path = os.path.join(script_dir,"model/")
+    os.makedirs(model_path,exist_ok=True)
+    tokenizer_path = os.path.join(script_dir,"tokenizer/")
+    os.makedirs(tokenizer_path,exist_ok=True)
+    FILE_Model = ['config.json', 'pytorch_model.bin']
+
+    FILE_Tokenizer = ['merges.txt', 'special_tokens_map.json',
+                   'tokenizer.json', 'tokenizer_config.json', 'vocab.json']
+
+    for loaded_file in FILE_Model:
+        shutil.move(os.path.join(script_dir,loaded_file),os.path.join(model_path,loaded_file))
+    for loaded_tok in FILE_Tokenizer:
+        shutil.move(os.path.join(script_dir,loaded_tok),os.path.join(tokenizer_path,loaded_tok))
+
+moving_files()
 
 def predict_summary(text, model_cnvrg, tokenizer):
 
     encoder_max_length = 256
-
     inputs = tokenizer(
         text,
         padding="max_length",
@@ -87,7 +104,7 @@ class WikiPage:
             for paragraph in soup.find_all('p'):
                 text += paragraph.text
             cleaned_text = self.get_clean_text(text)
-            if(len(cleaned_text) < 50):
+            if(len(cleaned_text) < 100):
                 flag = 1
         else:
             cnt = 0
@@ -100,7 +117,7 @@ class WikiPage:
                 for paragraph in soup.find_all('p'):
                     text += paragraph.text
                 cleaned_text = self.get_clean_text(text)
-                if(len(cleaned_text) > 50):
+                if(len(cleaned_text) > 100):
                     done = 1
                 else:
                     flag = 1
@@ -136,11 +153,17 @@ def predict(data):
     script_dir = pathlib.Path(__file__).parent.resolve()
 
     data = data['txt']
+    if os.path.exists("/input/Train/My_Custom_Model/"):
+        model_dir = "/input/Train/My_Custom_Model/"
+        tokenizer_dir = os.path.join(script_dir,"tokenizer_files")
+    else:
+        print('Running Stand Alone Endpoint')
+        script_dir = pathlib.Path(__file__).parent.resolve()
+        model_dir = os.path.join(script_dir,'model/')
+        tokenizer_dir = os.path.join(script_dir,"tokenizer/")
 
-    address_model_cnvrg = os.path.join(script_dir, 'model/')
-    model_cnvrg = AutoModelForSeq2SeqLM.from_pretrained(address_model_cnvrg)
-    tokenizer_address = os.path.join(script_dir, 'tokenizer/')
-    tokenizer = AutoTokenizer.from_pretrained(tokenizer_address)
+    model_cnvrg = AutoModelForSeq2SeqLM.from_pretrained(model_dir)
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir)
     response = {}
     if len(data) > 5:
         summary_output = predict_summary(data, model_cnvrg, tokenizer)
