@@ -29,6 +29,8 @@ arguments:
   gunicorn_config:
     - key: workers
       value: '1'
+    - key: timeout
+      value: '300'
   prep_file: ''
   prep_function: ''
   input_example:

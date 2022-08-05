@@ -31,14 +31,14 @@ def download_model_files():
     """
     current_dir = str(pathlib.Path(__file__).parent.resolve())
     for f in FILES_Model:
-        if not os.path.exists(current_dir + f'/{f}') and not os.path.exists('/input/Train/My_Custom_Model/' + f):
+        if not os.path.exists(current_dir + f'/{f}') and not os.path.exists('/input/Train/' + f):
             print(f'Downloading file: {f}')
             response = requests.get(BASE_FOLDER_URL_Model + f)
             f1 = os.path.join(current_dir, f)
             with open(f1, "wb") as fb:
                 fb.write(response.content)
     for f2 in FILES_Tokenizer:
-        if not os.path.exists(current_dir + f'/{f2}') and not os.path.exists('/input/Train/My_Custom_Model/' + f2):
+        if not os.path.exists(current_dir + f'/{f2}') and not os.path.exists('/input/Train/' + f2):
             print(f'Downloading file: {f2}')
             response = requests.get(BASE_FOLDER_URL_Tokenizer + f2)
             f11 = os.path.join(current_dir, f2)
@@ -155,7 +155,7 @@ def predict(data):
     data = data['txt']
     if os.path.exists("/input/Train/My_Custom_Model/"):
         model_dir = "/input/Train/My_Custom_Model/"
-        tokenizer_dir = os.path.join(script_dir,"tokenizer_files")
+        tokenizer_dir = os.path.join(script_dir,"tokenizer")
     else:
         print('Running Stand Alone Endpoint')
         script_dir = pathlib.Path(__file__).parent.resolve()

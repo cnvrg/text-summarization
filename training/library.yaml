@@ -1,4 +1,4 @@
-title: Text Summarization Train
+title: Text Summarization Training
 version: 1.0.0
 description: " - training the default model on user's data"
 icon: python
@@ -54,3 +54,16 @@ arguments:
     type: 'discrete'
     values:
       - '0.1'
+  - key: 'train_batch'
+    type: 'discrete'
+    values:
+      - '2'
+  - key: 'eval_batch'    
+    type: 'discrete'
+    values:
+      - '2'
+  - key: 'warmup_step_size'    
+    type: 'discrete'
+    values:
+      - '50'
+
