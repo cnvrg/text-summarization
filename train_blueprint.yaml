@@ -222,7 +222,7 @@ tasks:
       - key: workers
         value: '1'
       - key: timeout
-        value: '300'
+        value: '500'
 
     prep_file: ''
     prep_function: ''
