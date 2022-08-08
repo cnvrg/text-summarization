@@ -153,8 +153,8 @@ def predict(data):
     script_dir = pathlib.Path(__file__).parent.resolve()
 
     data = data['txt']
-    if os.path.exists("/input/Train/My_Custom_Model/"):
-        model_dir = "/input/Train/My_Custom_Model/"
+    if os.path.exists("/input/train/My_Custom_Model/"):
+        model_dir = "/input/train/My_Custom_Model/"
         tokenizer_dir = os.path.join(script_dir,"tokenizer")
     else:
         print('Running Stand Alone Endpoint')
