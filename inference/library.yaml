@@ -37,5 +37,4 @@ arguments:
     txt: text
   input_schema:
     txt: text
-  output_schema:
-    summary: text
+  output_schema: {}

@@ -230,8 +230,7 @@ tasks:
       txt: text
     input_schema:
       txt: text
-    output_schema:
-      summary: text
+    output_schema: {}
 
 relations:
   - from: S3 Connector

@@ -15,14 +15,15 @@ import pathlib
 import requests
 import shutil
 
+max_word_length = 20
 
-FILES_Model = ['config.json', 'pytorch_model.bin']
+files_model = ['config.json', 'pytorch_model.bin']
 
-FILES_Tokenizer = ['merges.txt', 'special_tokens_map.json',
+files_tokenizer = ['merges.txt', 'special_tokens_map.json',
                    'tokenizer.json', 'tokenizer_config.json', 'vocab.json']
 
-BASE_FOLDER_URL_Model = "https://libhub-readme.s3.us-west-2.amazonaws.com/model_files/summarization/bart_large_cnn/"
-BASE_FOLDER_URL_Tokenizer = "https://libhub-readme.s3.us-west-2.amazonaws.com/model_files/summarization/tokenizer_files/"
+base_folder_url_model = "https://libhub-readme.s3.us-west-2.amazonaws.com/model_files/summarization/bart_large_cnn/"
+base_folder_url_tokenizer = "https://libhub-readme.s3.us-west-2.amazonaws.com/model_files/summarization/tokenizer_files/"
 
 
 def download_model_files():
@@ -30,17 +31,17 @@ def download_model_files():
     Downloads the model files if they are not already present or pulled as artifacts from a previous train task
     """
     current_dir = str(pathlib.Path(__file__).parent.resolve())
-    for f in FILES_Model:
-        if not os.path.exists(current_dir + f'/{f}') and not os.path.exists('/input/Train/' + f):
+    for f in files_model:
+        if not os.path.exists(current_dir + f'/{f}') and not os.path.exists('/input/train/' + f):
             print(f'Downloading file: {f}')
-            response = requests.get(BASE_FOLDER_URL_Model + f)
+            response = requests.get(base_folder_url_model + f)
             f1 = os.path.join(current_dir, f)
             with open(f1, "wb") as fb:
                 fb.write(response.content)
-    for f2 in FILES_Tokenizer:
-        if not os.path.exists(current_dir + f'/{f2}') and not os.path.exists('/input/Train/' + f2):
+    for f2 in files_tokenizer:
+        if not os.path.exists(current_dir + f'/{f2}') and not os.path.exists('/input/train/' + f2):
             print(f'Downloading file: {f2}')
-            response = requests.get(BASE_FOLDER_URL_Tokenizer + f2)
+            response = requests.get(base_folder_url_tokenizer + f2)
             f11 = os.path.join(current_dir, f2)
             with open(f11, "wb") as fb1:
                 fb1.write(response.content)
@@ -135,7 +136,7 @@ class WikiPage:
 # function to run wikipedia class and functions on the user-input
 
 
-def wikipedia1(text):
+def wikipedia_extraction(text):
     input_list = []
     list2 = []
     disambiguation = 0
@@ -148,29 +149,30 @@ def wikipedia1(text):
     return input_list[0]
 # function to integrate the summarization and wikipedia functions together and output a json response
 
+if os.path.exists("/input/train/My_Custom_Model/"):
+    model_dir = "/input/train/My_Custom_Model/"
+    tokenizer_dir = os.path.join(script_dir,"tokenizer")
+else:
+    print('Running Stand Alone Endpoint')
+    script_dir = pathlib.Path(__file__).parent.resolve()
+    model_dir = os.path.join(script_dir,'model/')
+    tokenizer_dir = os.path.join(script_dir,"tokenizer/")
+
+model_cnvrg = AutoModelForSeq2SeqLM.from_pretrained(model_dir)
+tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir)
 
 def predict(data):
     script_dir = pathlib.Path(__file__).parent.resolve()
 
     data = data['txt']
-    if os.path.exists("/input/train/My_Custom_Model/"):
-        model_dir = "/input/train/My_Custom_Model/"
-        tokenizer_dir = os.path.join(script_dir,"tokenizer")
-    else:
-        print('Running Stand Alone Endpoint')
-        script_dir = pathlib.Path(__file__).parent.resolve()
-        model_dir = os.path.join(script_dir,'model/')
-        tokenizer_dir = os.path.join(script_dir,"tokenizer/")
 
-    model_cnvrg = AutoModelForSeq2SeqLM.from_pretrained(model_dir)
-    tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir)
     response = {}
-    if len(data) > 5:
+    if len(data) > max_word_length:
         summary_output = predict_summary(data, model_cnvrg, tokenizer)
         response["summary"] = str(summary_output[0])
 
     else:
-        text0 = wikipedia1(data)
+        text0 = wikipedia_extraction(data)
         summary_output = predict_summary(text0, model_cnvrg, tokenizer)
         response["summary"] = str(summary_output[0])
     return response
