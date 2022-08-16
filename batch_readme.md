@@ -1,6 +1,6 @@
 You can use this blueprint to extract summaries out of wikipedia articles and custom text using a custom-trained model.
 In order to train this model with your data, you would need to provide one folder located in s3:
-- summarization: the super folder where the training file, file containing text to be summarized (optional) and the modl/tokenizer files are kept.It has 2 sub-directories namely:
+- summarization: the super folder where the training file, file containing text to be summarized (optional) and the model/tokenizer files are kept.It has 2 sub-directories namely:
     - default_model: A folder with the base model you want to fine tune, to get your custom model
     - tokenizer: A folder with the tokenizer files that are used to assist in text summarization
 
