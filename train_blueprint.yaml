@@ -85,7 +85,7 @@ tasks:
     type: exec
 
     # The library data
-    library: text-summarization-training
+    library: text-summarize-training
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
@@ -138,15 +138,15 @@ tasks:
       - key: 'train_batch'
         type: 'discrete'
         values:
-          - '2'
+          - '4'
       - key: 'eval_batch'    
         type: 'discrete'
         values:
-          - '2'
+          - '4'
       - key: 'warmup_step_size'    
         type: 'discrete'
         values:
-          - '50'
+          - '500'
 
   - title: Batch Predict
     top: 400
@@ -177,7 +177,7 @@ tasks:
       - key: 'input_path'
         type: 'categorical'
         values:
-          - '/input/wikipedia_connector/cnvrg/wiki_output.csv'
+          - '/input/wikipedia_connector/wiki_output.csv'
       - key: 'modelpath'
         type: 'categorical'
         values:
@@ -201,7 +201,7 @@ tasks:
 
     type: deploy
 
-    library: text-summarization-inference1
+    library: text-summarize-inference
     library_version: 1.0.0
 
     command: python3 predict.py

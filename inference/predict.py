@@ -150,6 +150,7 @@ def wikipedia_extraction(text):
 # function to integrate the summarization and wikipedia functions together and output a json response
 
 if os.path.exists("/input/train/My_Custom_Model/"):
+    script_dir = pathlib.Path(__file__).parent.resolve()
     model_dir = "/input/train/My_Custom_Model/"
     tokenizer_dir = os.path.join(script_dir,"tokenizer")
 else:

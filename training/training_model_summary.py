@@ -112,6 +112,10 @@ script_dir = pathlib.Path(__file__).parent.resolve()
 cnvrg_workdir = os.environ.get("CNVRG_WORKDIR", "/cnvrg")
 language = "english"
 address_model_user = cnvrg_workdir+'/My_Custom_Model'
+
+#model_path = os.path.join(script_dir,"model/")
+os.makedirs(address_model_user,exist_ok=True)
+
 address_model_cnvrg = args.default_model
 tokenizer_path = args.tokenizer
 rows_cnt = args.train_rows
@@ -239,6 +243,7 @@ trainer = Seq2SeqTrainer(
 evaluate_before = trainer.evaluate()
 trainer.train()
 evaluate_after = trainer.evaluate()
+
 model.save_pretrained(address_model_user)
 print("Model is saved")
 metrics_file_name = "eval_metrics.csv"
