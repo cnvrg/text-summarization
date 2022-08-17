@@ -27,7 +27,7 @@ In order to train this model with your data, you would need to provide one folde
 6. Go to the 'Serving' tab in the project and look for your endpoint
 8. You can also integrate your API with your code using the integration panel at the bottom of the page
 
-Congrats! You have trained and deployed a custom model that summarizes custom text and wikipedia articles.
+Congrats! You have deployed a custom model that summarizes custom text and wikipedia articles.
 
 [See here how we created this blueprint](https://github.com/cnvrg/text-summarization)
 
