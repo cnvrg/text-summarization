@@ -66,4 +66,12 @@ arguments:
     type: 'discrete'
     values:
       - '50'
+  - key: 'learning_rate'
+    type: 'discrete'
+    values:
+      - '3e-05'
+  - key: 'num_epoch'
+    type: 'discrete'
+    values:
+      - '2'
 

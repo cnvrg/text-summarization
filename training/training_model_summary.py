@@ -16,6 +16,7 @@ from transformers import (
     DataCollatorForSeq2Seq,
 )
 import os
+import shutil
 
 parser = argparse.ArgumentParser(description="""Preprocessor""")
 parser.add_argument(
@@ -106,16 +107,30 @@ parser.add_argument(
     required=True,
     help="""hyperparamter while training""",
 )
+parser.add_argument(
+    "--learning_rate",
+    action="store",
+    dest="learning_rate",
+    default="3e-05",
+    required=True,
+    help="""learning rate""",
+)
+parser.add_argument(
+    "--num_epoch",
+    action="store",
+    dest="num_epoch",
+    default="5",
+    required=True,
+    help="""number of iterations the training will run for""",
+)
 
 args = parser.parse_args()
 script_dir = pathlib.Path(__file__).parent.resolve()
 cnvrg_workdir = os.environ.get("CNVRG_WORKDIR", "/cnvrg")
 language = "english"
-address_model_user = cnvrg_workdir+'/My_Custom_Model'
-
 #model_path = os.path.join(script_dir,"model/")
-os.makedirs(address_model_user,exist_ok=True)
 
+address_model_user = os.path.join(cnvrg_workdir)
 address_model_cnvrg = args.default_model
 tokenizer_path = args.tokenizer
 rows_cnt = args.train_rows
@@ -132,7 +147,8 @@ label_smooth_factor = float(args.label_smooth_factor)
 train_batch = int(args.train_batch)
 eval_batch = int(args.eval_batch)
 warmup_step_size = int(args.warmup_step_size)
-
+num_epochs = int(args.num_epoch)
+lr = float(args.learning_rate)
 
 def batch_tokenize_preprocess(batch, tokenizer, max_source_length, max_target_length):
     source, target = batch["document"], batch["summary"]
@@ -215,12 +231,12 @@ def compute_metrics(eval_preds):
 
 training_args = Seq2SeqTrainingArguments(
     output_dir="results",
-    num_train_epochs=1,
+    num_train_epochs=num_epochs,
     do_train=True,
     do_eval=True,
     per_device_train_batch_size=train_batch,
     per_device_eval_batch_size=eval_batch,
-    # learning_rate=3e-05,
+    learning_rate=lr,
     warmup_steps=warmup_step_size,
     weight_decay=weight_decay_factor,
     label_smoothing_factor=label_smooth_factor,
@@ -246,6 +262,12 @@ evaluate_after = trainer.evaluate()
 
 model.save_pretrained(address_model_user)
 print("Model is saved")
+address_model_new = os.path.join(cnvrg_workdir,"My_Custom_Model")
+os.makedirs(address_model_new,exist_ok=True)
+files_Model = ['config.json', 'pytorch_model.bin']
+for loaded_file in files_Model:
+    shutil.move(os.path.join(address_model_user,loaded_file),os.path.join(address_model_new,loaded_file))
+
 metrics_file_name = "eval_metrics.csv"
 eval_metrics = pd.DataFrame(
     zip(

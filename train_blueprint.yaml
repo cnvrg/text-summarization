@@ -147,6 +147,14 @@ tasks:
         type: 'discrete'
         values:
           - '500'
+      - key: 'learning_rate'
+        type: 'discrete'
+        values:
+          - '3e-05'
+      - key: 'num_epoch'
+        type: 'discrete'
+        values:
+          - '2'
 
   - title: Batch Predict
     top: 400
