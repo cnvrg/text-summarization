@@ -189,7 +189,7 @@ tasks:
       - key: 'modelpath'
         type: 'categorical'
         values:
-          - '/input/Train/My_Custom_Model/'
+          - '/input/train/My_Custom_Model/'
       - key: 'tokenizer'
         type: 'categorical'
         values:

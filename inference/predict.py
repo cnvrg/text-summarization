@@ -164,9 +164,8 @@ tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir)
 
 def predict(data):
     script_dir = pathlib.Path(__file__).parent.resolve()
-
     data = data['txt']
-
+    predicted_response = {}
     response = {}
     if len(data) > max_word_length:
         summary_output = predict_summary(data, model_cnvrg, tokenizer)
@@ -176,4 +175,5 @@ def predict(data):
         text0 = wikipedia_extraction(data)
         summary_output = predict_summary(text0, model_cnvrg, tokenizer)
         response["summary"] = str(summary_output[0])
-    return response
+    predicted_response.append(response)
+    return predicted_response
