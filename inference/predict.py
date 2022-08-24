@@ -163,6 +163,9 @@ model_cnvrg = AutoModelForSeq2SeqLM.from_pretrained(model_dir)
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_dir)
 
 def predict(data):
+    predicted_response = {}
+    cnt_iter = 'prediction'
+    predicted_response[cnt_iter] = []
     script_dir = pathlib.Path(__file__).parent.resolve()
     data = data['txt']
     predicted_response = {}
@@ -175,5 +178,5 @@ def predict(data):
         text0 = wikipedia_extraction(data)
         summary_output = predict_summary(text0, model_cnvrg, tokenizer)
         response["summary"] = str(summary_output[0])
-    predicted_response.append(response)
+    predicted_response[cnt_iter] = response
     return predicted_response
