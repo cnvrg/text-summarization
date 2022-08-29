@@ -170,7 +170,7 @@ def predict(data):
     data = data['txt']
     predicted_response = {}
     response = {}
-    if len(data) > max_word_length:
+    if len(data) > max_word_length and (("wikipedia.org/wiki/" not in data) and ("https://" not in data)):
         summary_output = predict_summary(data, model_cnvrg, tokenizer)
         response["summary"] = str(summary_output[0])
 
