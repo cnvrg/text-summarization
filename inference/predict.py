@@ -107,6 +107,9 @@ class WikiPage:
             cleaned_text = self.get_clean_text(text)
             if(len(cleaned_text) < 100):
                 flag = 1
+            output.append(cleaned_text)
+            output.append(str(flag))
+            return output
         else:
             cnt = 0
             done = 0
@@ -123,7 +126,6 @@ class WikiPage:
                 else:
                     flag = 1
                     cnt = cnt+1
-
             output.append(cleaned_text)
             output.append(str(flag))
             return output
@@ -173,7 +175,6 @@ def predict(data):
     if len(data) > max_word_length and (("wikipedia.org/wiki/" not in data) and ("https://" not in data)):
         summary_output = predict_summary(data, model_cnvrg, tokenizer)
         response["summary"] = str(summary_output[0])
-
     else:
         text0 = wikipedia_extraction(data)
         summary_output = predict_summary(text0, model_cnvrg, tokenizer)
