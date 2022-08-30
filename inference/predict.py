@@ -32,14 +32,14 @@ def download_model_files():
     """
     current_dir = str(pathlib.Path(__file__).parent.resolve())
     for f in files_model:
-        if not os.path.exists(current_dir + f'/{f}') and not os.path.exists('/input/train/' + f):
+        if not os.path.exists(os.path.join(current_dir,'model',f)) and not os.path.exists('/input/train/My_Custom_Model/' + f):
             print(f'Downloading file: {f}')
             response = requests.get(base_folder_url_model + f)
             f1 = os.path.join(current_dir, f)
             with open(f1, "wb") as fb:
                 fb.write(response.content)
     for f2 in files_tokenizer:
-        if not os.path.exists(current_dir + f'/{f2}') and not os.path.exists('/input/train/' + f2):
+        if not os.path.exists(os.path.join((os.path.join(current_dir,'tokenizer',f)))) and not os.path.exists('/input/train/My_Custom_Model/' + f2):
             print(f'Downloading file: {f2}')
             response = requests.get(base_folder_url_tokenizer + f2)
             f11 = os.path.join(current_dir, f2)
@@ -100,6 +100,7 @@ class WikiPage:
         output = []
         flag = 0
         if ".org" in page:
+            language = page[]
             soup = BeautifulSoup(urlopen(page).read(), 'lxml')
             text = ''
             for paragraph in soup.find_all('p'):
