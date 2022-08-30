@@ -1,4 +1,4 @@
-title: Text Summarize Training
+title: Text Summarization Train
 version: 1.0.0
 description: " - training the default model on user's data"
 icon: python

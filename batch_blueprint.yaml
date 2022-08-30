@@ -58,7 +58,7 @@ tasks:
 
     type: exec
 
-    library: wikipedia-connector4
+    library: wikipedia-connector
     library_version: 1.0.0
 
     command: python3 wiki.py
