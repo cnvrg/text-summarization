@@ -49,23 +49,23 @@ def download_model_files():
 download_model_files()
 
 def moving_files():
-    if not os.path.exists('/input/train/My_Custom_Model/' + f):
-        script_dir = pathlib.Path(__file__).parent.resolve()
-        model_path = os.path.join(script_dir,"model/")
-        os.makedirs(model_path,exist_ok=True)
-        tokenizer_path = os.path.join(script_dir,"tokenizer/")
-        os.makedirs(tokenizer_path,exist_ok=True)
-        FILE_Model = ['config.json', 'pytorch_model.bin']
+    script_dir = pathlib.Path(__file__).parent.resolve()
+    model_path = os.path.join(script_dir,"model/")
+    os.makedirs(model_path,exist_ok=True)
+    tokenizer_path = os.path.join(script_dir,"tokenizer/")
+    os.makedirs(tokenizer_path,exist_ok=True)
+    FILE_Model = ['config.json', 'pytorch_model.bin']
 
-        FILE_Tokenizer = ['merges.txt', 'special_tokens_map.json',
-                       'tokenizer.json', 'tokenizer_config.json', 'vocab.json']
+    FILE_Tokenizer = ['merges.txt', 'special_tokens_map.json',
+                   'tokenizer.json', 'tokenizer_config.json', 'vocab.json']
 
-        for loaded_file in FILE_Model:
-            shutil.move(os.path.join(script_dir,loaded_file),os.path.join(model_path,loaded_file))
-        for loaded_tok in FILE_Tokenizer:
-            shutil.move(os.path.join(script_dir,loaded_tok),os.path.join(tokenizer_path,loaded_tok))
+    for loaded_file in FILE_Model:
+        shutil.move(os.path.join(script_dir,loaded_file),os.path.join(model_path,loaded_file))
+    for loaded_tok in FILE_Tokenizer:
+        shutil.move(os.path.join(script_dir,loaded_tok),os.path.join(tokenizer_path,loaded_tok))
 
-moving_files()
+if not os.path.exists('/input/train/My_Custom_Model/'):
+    moving_files()
 
 def predict_summary(text, model_cnvrg, tokenizer):
 
