@@ -32,14 +32,17 @@ def download_model_files():
     """
     current_dir = str(pathlib.Path(__file__).parent.resolve())
     for f in files_model:
-        if not os.path.exists(os.path.join(current_dir,'model',f)) and not os.path.exists('/input/train/My_Custom_Model/' + f):
+        model_loc = os.path.join(current_dir,'model',f)
+        custom_path = ('/input/train/My_Custom_Model/' + f)
+        if not os.path.exists(model_loc) and not os.path.exists(custom_path):
             print(f'Downloading file: {f}')
             response = requests.get(base_folder_url_model + f)
             f1 = os.path.join(current_dir, f)
             with open(f1, "wb") as fb:
                 fb.write(response.content)
     for f2 in files_tokenizer:
-        if not os.path.exists(os.path.join((os.path.join(current_dir,'tokenizer',f)))) and not os.path.exists('/input/train/My_Custom_Model/' + f2):
+        tokenizer_loc = (os.path.join(current_dir,'tokenizer',f2))
+        if not os.path.exists(tokenizer_loc) :
             print(f'Downloading file: {f2}')
             response = requests.get(base_folder_url_tokenizer + f2)
             f11 = os.path.join(current_dir, f2)
@@ -55,20 +58,21 @@ def moving_files():
     tokenizer_path = os.path.join(script_dir,"tokenizer/")
     os.makedirs(tokenizer_path,exist_ok=True)
     FILE_Model = ['config.json', 'pytorch_model.bin']
-
     FILE_Tokenizer = ['merges.txt', 'special_tokens_map.json',
                    'tokenizer.json', 'tokenizer_config.json', 'vocab.json']
-
     for loaded_file in FILE_Model:
-        shutil.move(os.path.join(script_dir,loaded_file),os.path.join(model_path,loaded_file))
+        source_path = os.path.join(script_dir,loaded_file)
+        dest_path = os.path.join(model_path,loaded_file)
+        shutil.move(os.path.join(source_path,dest_path)
     for loaded_tok in FILE_Tokenizer:
-        shutil.move(os.path.join(script_dir,loaded_tok),os.path.join(tokenizer_path,loaded_tok))
+        source_path = os.path.join(script_dir,loaded_tok)
+        dest_path = os.path.join(tokenizer_path,loaded_tok)
+        shutil.move(os.path.join(source_path,dest_path)
 
 if not os.path.exists('/input/train/My_Custom_Model/'):
     moving_files()
 
 def predict_summary(text, model_cnvrg, tokenizer):
-
     encoder_max_length = 256
     inputs = tokenizer(
         text,
@@ -83,10 +87,8 @@ def predict_summary(text, model_cnvrg, tokenizer):
     outputs = model_cnvrg.generate(
         input_ids, attention_mask=attention_mask, max_length=500, min_length=round(min_length_1))
     outputs_str = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-
     return outputs_str
 # Class which contains the code to extract text from wikipedia
-
 
 class WikiPage:
     def __init__(self, page):

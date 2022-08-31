@@ -50,6 +50,9 @@ class WikiPage:
             cleaned_text = self.get_clean_text(text)
             if(len(cleaned_text) < 100):
                 flag = 1
+            output.append(cleaned_text) #type(output) type(cleaned_text) output[1]
+            output.append(str(flag))
+            return output
         else:
             cnt = 0
             done = 0
