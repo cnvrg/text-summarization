@@ -63,11 +63,11 @@ def moving_files():
     for loaded_file in FILE_Model:
         source_path = os.path.join(script_dir,loaded_file)
         dest_path = os.path.join(model_path,loaded_file)
-        shutil.move(os.path.join(source_path,dest_path))
+        shutil.move(source_path,dest_path)
     for loaded_tok in FILE_Tokenizer:
         source_path = os.path.join(script_dir,loaded_tok)
         dest_path = os.path.join(tokenizer_path,loaded_tok)
-        shutil.move(os.path.join(source_path,dest_path))
+        shutil.move(source_path,dest_path)
 
 if not os.path.exists('/input/train/My_Custom_Model/'):
     moving_files()
