@@ -61,13 +61,13 @@ def moving_files():
     FILE_Tokenizer = ['merges.txt', 'special_tokens_map.json',
                    'tokenizer.json', 'tokenizer_config.json', 'vocab.json']
     for file_token in FILE_Tokenizer:
-        tokenizer_loc = os.path.join(current_dir,'tokenizer',file_token)
+        tokenizer_loc = os.path.join(script_dir,'tokenizer',file_token)
         if not os.path.exists(tokenizer_loc):
             source_path = os.path.join(script_dir,file_token)
             dest_path = os.path.join(tokenizer_path,file_token)
             shutil.move(source_path,dest_path)
     for file_model in FILE_Model: 
-        model_loc = os.path.join(current_dir,'model',file_model)
+        model_loc = os.path.join(script_dir,'model',file_model)
         custom_path = os.path.join('/input/train/My_Custom_Model/' ,file_model)
         if not os.path.exists(model_loc) and not os.path.exists(custom_path):
             source_path = os.path.join(script_dir,file_model)
