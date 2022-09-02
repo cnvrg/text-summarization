@@ -33,7 +33,7 @@ def download_model_files():
     current_dir = str(pathlib.Path(__file__).parent.resolve())
     for f in files_model:
         model_loc = os.path.join(current_dir,'model',f)
-        custom_path = ('/input/train/My_Custom_Model/' + f)
+        custom_path = os.path.join('/input/train/My_Custom_Model/' ,f)
         if not os.path.exists(model_loc) and not os.path.exists(custom_path):
             print(f'Downloading file: {f}')
             response = requests.get(base_folder_url_model + f)
@@ -41,7 +41,7 @@ def download_model_files():
             with open(f1, "wb") as fb:
                 fb.write(response.content)
     for f2 in files_tokenizer:
-        tokenizer_loc = (os.path.join(current_dir,'tokenizer',f2))
+        tokenizer_loc = os.path.join(current_dir,'tokenizer',f2)
         if not os.path.exists(tokenizer_loc) :
             print(f'Downloading file: {f2}')
             response = requests.get(base_folder_url_tokenizer + f2)
@@ -60,17 +60,21 @@ def moving_files():
     FILE_Model = ['config.json', 'pytorch_model.bin']
     FILE_Tokenizer = ['merges.txt', 'special_tokens_map.json',
                    'tokenizer.json', 'tokenizer_config.json', 'vocab.json']
-    for loaded_file in FILE_Model:
-        source_path = os.path.join(script_dir,loaded_file)
-        dest_path = os.path.join(model_path,loaded_file)
-        shutil.move(source_path,dest_path)
-    for loaded_tok in FILE_Tokenizer:
-        source_path = os.path.join(script_dir,loaded_tok)
-        dest_path = os.path.join(tokenizer_path,loaded_tok)
-        shutil.move(source_path,dest_path)
+    for file_token in FILE_Tokenizer:
+        tokenizer_loc = os.path.join(current_dir,'tokenizer',file_token)
+        if not os.path.exists(tokenizer_loc):
+            source_path = os.path.join(script_dir,file_token)
+            dest_path = os.path.join(tokenizer_path,file_token)
+            shutil.move(source_path,dest_path)
+    for file_model in FILE_Model: 
+        model_loc = os.path.join(current_dir,'model',file_model)
+        custom_path = os.path.join('/input/train/My_Custom_Model/' ,file_model)
+        if not os.path.exists(model_loc) and not os.path.exists(custom_path):
+            source_path = os.path.join(script_dir,file_model)
+            dest_path = os.path.join(model_path,file_model)
+            shutil.move(source_path,dest_path)
 
-if not os.path.exists('/input/train/My_Custom_Model/'):
-    moving_files()
+moving_files()
 
 def predict_summary(text, model_cnvrg, tokenizer):
     encoder_max_length = 256
@@ -157,7 +161,8 @@ def wikipedia_extraction(text):
 if os.path.exists("/input/train/My_Custom_Model/"):
     script_dir = pathlib.Path(__file__).parent.resolve()
     model_dir = "/input/train/My_Custom_Model/"
-    tokenizer_dir = os.path.join(script_dir,"tokenizer")
+    tokenizer_dir = '/input/s3_connector/model_files/summarization/tokenizer_files/tokenizer/'
+    #tokenizer_dir = os.path.join(script_dir,"tokenizer")
 else:
     print('Running Stand Alone Endpoint')
     script_dir = pathlib.Path(__file__).parent.resolve()
