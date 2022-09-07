@@ -161,7 +161,7 @@ def wikipedia_extraction(text):
 if os.path.exists("/input/train/My_Custom_Model/"):
     script_dir = pathlib.Path(__file__).parent.resolve()
     model_dir = "/input/train/My_Custom_Model/"
-    tokenizer_dir = '/input/s3_connector/model_files/summarization/tokenizer_files/tokenizer/'
+    tokenizer_dir = '/input/s3_connector/model_files/summarization/tokenizer_files/'
     #tokenizer_dir = os.path.join(script_dir,"tokenizer")
 else:
     print('Running Stand Alone Endpoint')

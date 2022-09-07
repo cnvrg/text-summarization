@@ -164,7 +164,7 @@ tasks:
     type: exec
 
     # The library data
-    library: text-summarization-batch
+    library: text-summarization-batch1
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
