@@ -156,7 +156,7 @@ input_file = pd.read_csv(args.input_path)
 for i in range(input_file.shape[0]):
     text = input_file['text'][i]
     broken_text = breakup(text)
-    for j in len(broken_text):
+    for j in range(len(broken_text)):
         j = j+cnt
         split_frame.add[j,'broken_text'] = broken_text[j]
         split_frame.add[j,'title'] = df['title'][i]
@@ -182,3 +182,4 @@ shra[['title','Summary']].drop_duplicates()
 
 summaries_generated.to_csv(
     cnvrg_workdir+"/{}".format(output_file_name), index=False)
+5
