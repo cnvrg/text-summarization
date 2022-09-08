@@ -158,8 +158,8 @@ for i in range(input_file.shape[0]):
     broken_text = breakup(text)
     for j in range(len(broken_text)):
         j = j+cnt
-        split_frame.add[j,'broken_text'] = broken_text[j]
-        split_frame.add[j,'title'] = df['title'][i]
+        split_frame.at[j,'broken_text'] = broken_text[j]
+        split_frame.at[j,'title'] = df['title'][i]
     cnt=j
 split_csv_path = cnvrg_workdir+'split_input.csv'
 split_frame.to_csv(split_csv_path)
