@@ -72,7 +72,7 @@ tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
 min_percent = float(args.min_percent)
 encoder_max_length = int(args.encoder_max_length)
 # This function takes a single string as input and breaks it up into multiple strings each of which has a length less than the limit set. The strings are broken down at full stops closest to the the limit set.
-limit = 4096
+limit = 512
 def breakup(input_text):
     # add full stop at the end of the text if not already present to mark end
     if input_text[-1] != ".":
