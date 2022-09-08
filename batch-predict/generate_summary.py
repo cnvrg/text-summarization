@@ -66,16 +66,39 @@ address_model_cnvrg = args.modelpath
 tokenizer_path = args.tokenizer
 rows_cnt = pd.read_csv(args.input_path).shape[0]
 sub1 = "train[:" + str(rows_cnt) + "]"
-input_doc = datasets.load_dataset(
-    "csv", data_files=args.input_path, split=(str(sub1)))
 model_cnvrg = AutoModelForSeq2SeqLM.from_pretrained(address_model_cnvrg)
 output_file_name = 'summaries.csv'
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
 min_percent = float(args.min_percent)
 encoder_max_length = int(args.encoder_max_length)
+# This function takes a single string as input and breaks it up into multiple strings each of which has a length less than the limit set. The strings are broken down at full stops closest to the the limit set.
+def breakup(input_text):
+    # add full stop at the end of the text if not already present to mark end
+    if input_text[-1] != ".":
+        input_text += "."
+    encoded_input = tokenizer(input_text)# encode text to get total token size
+    process = []
+    to_loop = (len(encoded_input["input_ids"]) // limit + 1)#optimum token ratio
+    for i in range(to_loop):
+        breakup = tokenizer.decode(
+            encoded_input["input_ids"][:limit]
+        )  # convert first 512 tokens to raw text.
+        end_sentence = breakup.rfind(".")# last full stop(end of last sentence)
+        if end_sentence != -1:
+            process.append(
+                breakup[0 : end_sentence + 1]
+            )  # break at the last complete sentence and add it to the list
+            input_text = input_text[end_sentence + 1 :]  # remaining raw text
+            encoded_input = tokenizer(input_text)  # convert into tokens again
+        else:
+            process.append(
+                breakup
+            )  # if full stop not found add the entire text to the list
+            input_text = input_text[len(breakup) :]  # remaining raw text
+            encoded_input = tokenizer(input_text)  # convert into tokens again
+    return process
+
 # Function which generates summaries from text and the modelpath
-
-
 def generate_summary(test_samples, model):
     outputs_1 = []
     outputs_str_1 = []
@@ -127,6 +150,10 @@ def batch_tokenize_preprocess(batch, tokenizer, max_source_length, max_target_le
 
 
 # running the function
+input_doc = datasets.load_dataset(
+    "csv", data_files=args.input_path, split=(str(sub1)))
+
+smaller_text = breakup(input_doc)
 summaries_case_0 = generate_summary(input_doc, model_cnvrg)[1]
 
 summaries_generated = pd.DataFrame(
