@@ -72,6 +72,7 @@ tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
 min_percent = float(args.min_percent)
 encoder_max_length = int(args.encoder_max_length)
 # This function takes a single string as input and breaks it up into multiple strings each of which has a length less than the limit set. The strings are broken down at full stops closest to the the limit set.
+limit = 4096
 def breakup(input_text):
     # add full stop at the end of the text if not already present to mark end
     if input_text[-1] != ".":
@@ -133,7 +134,7 @@ print("defined_generate function")
 
 
 def batch_tokenize_preprocess(batch, tokenizer, max_source_length, max_target_length):
-    source, target = batch["document"], batch["summary"]
+    source, target = batch["text"], batch["summary"]
     source_tokenized = tokenizer(
         source, padding="max_length", truncation=True, max_length=max_source_length
     )
@@ -148,16 +149,36 @@ def batch_tokenize_preprocess(batch, tokenizer, max_source_length, max_target_le
     ]
     return batch
 
+# Splitting the input into multiple paragraphs
+cnt=0
+split_frame = pd.DataFrame(columns=['broken_text','title'])
+input_file = pd.read_csv(args.input_path)
+for i in range(input_file.shape[0]):
+    text = input_file['text'][i]
+    broken_text = breakup(text)
+    for j in len(broken_text):
+        j = j+cnt
+        split_frame.add[j,'broken_text'] = broken_text[j]
+        split_frame.add[j,'title'] = df['title'][i]
+    cnt=j
+split_csv_path = cnvrg_workdir+'split_input.csv'
+split_frame.to_csv(split_csv_path)
 
 # running the function
+#input_doc = datasets.load_dataset(
+#    "csv", data_files=args.input_path, split=(str(sub1)))
 input_doc = datasets.load_dataset(
-    "csv", data_files=args.input_path, split=(str(sub1)))
+    "csv", data_files=split_csv_path, split=(str(sub1)))
 
-smaller_text = breakup(input_doc)
+#smaller_text = breakup(input_doc)
 summaries_case_0 = generate_summary(input_doc, model_cnvrg)[1]
 
 summaries_generated = pd.DataFrame(
     summaries_case_0, columns=["Generated_Summary"])
+# Concatenatnig summaries
+summaries_generated['title'] = list(split_frame['title'])
+summaries_generated['Summary'] = summaries_generated.groupby(['title'])['Generated_Summary'].transform(lambda x: ','.join(x))
+shra[['title','Summary']].drop_duplicates()
 
 summaries_generated.to_csv(
     cnvrg_workdir+"/{}".format(output_file_name), index=False)
