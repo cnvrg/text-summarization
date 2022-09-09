@@ -64,8 +64,7 @@ cnvrg_workdir = os.environ.get("CNVRG_WORKDIR", "/cnvrg")
 language = "english"
 address_model_cnvrg = args.modelpath
 tokenizer_path = args.tokenizer
-rows_cnt = pd.read_csv(args.input_path).shape[0]
-sub1 = "train[:" + str(rows_cnt) + "]"
+#rows_cnt = pd.read_csv(args.input_path).shape[0]
 model_cnvrg = AutoModelForSeq2SeqLM.from_pretrained(address_model_cnvrg)
 output_file_name = 'summaries.csv'
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
@@ -105,7 +104,7 @@ def generate_summary(test_samples, model):
     outputs_str_1 = []
     for i in range(len(test_samples)):
         inputs = tokenizer(
-            test_samples["text"][i],
+            test_samples["broken_text"][i],
             padding="max_length",
             truncation=True,
             max_length=encoder_max_length,
@@ -114,7 +113,7 @@ def generate_summary(test_samples, model):
         input_ids = inputs.input_ids.to(model.device)
         attention_mask = inputs.attention_mask.to(model.device)
         # defining minimum length of summaries
-        min_length_1 = min_percent * len(test_samples["text"][i])
+        min_length_1 = min_percent * len(test_samples["broken_text"][i])
 
         outputs = model.generate(
             input_ids,
@@ -129,25 +128,7 @@ def generate_summary(test_samples, model):
 
     return outputs_1, outputs_str_1
 
-
 print("defined_generate function")
-
-
-def batch_tokenize_preprocess(batch, tokenizer, max_source_length, max_target_length):
-    source, target = batch["text"], batch["summary"]
-    source_tokenized = tokenizer(
-        source, padding="max_length", truncation=True, max_length=max_source_length
-    )
-    target_tokenized = tokenizer(
-        target, padding="max_length", truncation=True, max_length=max_target_length
-    )
-    batch = {k: v for k, v in source_tokenized.items()}
-    # Ignore padding in the loss
-    batch["labels"] = [
-        [-100 if token == tokenizer.pad_token_id else token for token in l]
-        for l in target_tokenized["input_ids"]
-    ]
-    return batch
 
 # Splitting the input into multiple paragraphs
 cnt=0
@@ -157,16 +138,19 @@ for i in range(input_file.shape[0]):
     text = input_file['text'][i]
     broken_text = breakup(text)
     for j in range(len(broken_text)):
+        z = j
         j = j+cnt
-        split_frame.at[j,'broken_text'] = broken_text[j]
-        split_frame.at[j,'title'] = df['title'][i]
+        split_frame.at[j,'broken_text'] = broken_text[z]
+        split_frame.at[j,'title'] = input_file['title'][i]
     cnt=j
-split_csv_path = cnvrg_workdir+'split_input.csv'
-split_frame.to_csv(split_csv_path)
+split_csv_path = cnvrg_workdir+'/split_input.csv'
+split_frame.to_csv(split_csv_path,index=False)
 
 # running the function
 #input_doc = datasets.load_dataset(
 #    "csv", data_files=args.input_path, split=(str(sub1)))
+rows_cnt = split_frame.shape[0]
+sub1 = "train[:" + str(rows_cnt) + "]"
 input_doc = datasets.load_dataset(
     "csv", data_files=split_csv_path, split=(str(sub1)))
 
@@ -175,6 +159,7 @@ summaries_case_0 = generate_summary(input_doc, model_cnvrg)[1]
 
 summaries_generated = pd.DataFrame(
     summaries_case_0, columns=["Generated_Summary"])
+summaries_generated.to_csv('/cnvrg/summaries_premature.csv')
 # Concatenatnig summaries
 summaries_generated['title'] = list(split_frame['title'])
 summaries_generated['Summary'] = summaries_generated.groupby(['title'])['Generated_Summary'].transform(lambda x: ','.join(x))
