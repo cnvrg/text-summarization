@@ -163,8 +163,7 @@ summaries_generated.to_csv('/cnvrg/summaries_premature.csv')
 # Concatenatnig summaries
 summaries_generated['title'] = list(split_frame['title'])
 summaries_generated['Summary'] = summaries_generated.groupby(['title'])['Generated_Summary'].transform(lambda x: ','.join(x))
-shra[['title','Summary']].drop_duplicates()
+summaries_generated = summaries_generated[['title','Summary']].drop_duplicates()
 
 summaries_generated.to_csv(
     cnvrg_workdir+"/{}".format(output_file_name), index=False)
-5
