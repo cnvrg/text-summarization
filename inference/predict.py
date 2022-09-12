@@ -154,9 +154,36 @@ def wikipedia_extraction(text):
     input_list.append(wiki_text_content1)
     if(wiki_text_content.get_wiki_page(str(text))[1] == '1'):
         disambiguation = disambiguation + 1
-    list2.append(str(text))
+    #list2.append(str(text))
     return input_list[0]
 # function to integrate the summarization and wikipedia functions together and output a json response
+limit = 512
+def breakup(input_text):
+    # add full stop at the end of the text if not already present to mark end
+    if input_text[-1] != ".":
+        input_text += "."
+    encoded_input = tokenizer(input_text)# encode text to get total token size
+    process = []
+    to_loop = (len(encoded_input["input_ids"]) // limit + 1)#optimum token ratio
+    for i in range(to_loop):
+        breakup = tokenizer.decode(
+            encoded_input["input_ids"][:limit]
+        )  # convert first 512 tokens to raw text.
+        end_sentence = breakup.rfind(".")# last full stop(end of last sentence)
+        if end_sentence != -1:
+            process.append(
+                breakup[0 : end_sentence + 1]
+            )  # break at the last complete sentence and add it to the list
+            input_text = input_text[end_sentence + 1 :]  # remaining raw text
+            encoded_input = tokenizer(input_text)  # convert into tokens again
+        else:
+            process.append(
+                breakup
+            )  # if full stop not found add the entire text to the list
+            input_text = input_text[len(breakup) :]  # remaining raw text
+            encoded_input = tokenizer(input_text)  # convert into tokens again
+    return process
+
 
 if os.path.exists("/input/train/My_Custom_Model/"):
     script_dir = pathlib.Path(__file__).parent.resolve()
@@ -181,11 +208,17 @@ def predict(data):
     predicted_response = {}
     response = {}
     if len(data) > max_word_length and (("wikipedia.org/wiki/" not in data) and ("https://" not in data)):
-        summary_output = predict_summary(data, model_cnvrg, tokenizer)
-        response["summary"] = str(summary_output[0])
+        split_list = breakup(data)
+        summary_output = ''
+        for i in split_list:
+            summary_output = summary_output+predict_summary(i, model_cnvrg, tokenizer)[0]+' '
+        response["summary"] = str(summary_output)
     else:
         text0 = wikipedia_extraction(data)
-        summary_output = predict_summary(text0, model_cnvrg, tokenizer)
-        response["summary"] = str(summary_output[0])
+        split_list = breakup(text0)
+        summary_output = ''
+        for i in split_list:
+            summary_output = summary_output+predict_summary(i, model_cnvrg, tokenizer)[0]+' '
+        response["summary"] = str(summary_output)
     predicted_response[cnt_iter] = response
     return predicted_response
