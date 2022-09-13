@@ -1,13 +1,13 @@
-title: Text Summarize Batch
+title: Text Summarization Batch
 version: 1.0.0
 description: Generating the summary of articles given by the user via the users custom trained model
 long_description: Text Summarization is the process of reducing some text to a shorter and more concise version without distorting its meaning
-
 author: "cnvrg"
 author_email: "libhub@cnvrg.io"
 
 tags:
   - training
+
 tasks:
   - title: S3 Connector
     top: 100
@@ -85,7 +85,7 @@ tasks:
     type: exec
 
     # The library data
-    library: text-summarization-batch1
+    library: text-summarization-batch
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
