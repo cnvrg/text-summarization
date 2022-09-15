@@ -17,7 +17,7 @@ tasks:
     type: exec
 
     # The library data
-    library: s3-connector7
+    library: s3-connector
     library_version: 1.0.0
 
     # The flattened library parameters (in this case we have training library)
