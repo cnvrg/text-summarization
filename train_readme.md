@@ -1,66 +1,45 @@
-You can use this blueprint to train a tailored model that summarizes wikipedia articles and custom text.
-In order to train this model with your data, you would need to provide one folder located in s3:
-- summarization: the super folder where the training file, file containing text to be summarized (optional) and the modl/tokenizer files are kept.It has 2 sub-directories namely:
-    - default_model: A folder with the base model you want to fine tune, to get your custom model
-    - tokenizer: A folder with the tokenizer files that are used to assist in text summarization
+Use this blueprint to train a custom model that can summarize Wikipedia articles and custom textual paragraphs to short sentences using the Bert model. This blueprint also establishes an endpoint that can be used to summarize paragraphs based on the newly trained model.
 
-1. Click on `Use Blueprint` button
-2. You will be redirected to your blueprint flow page
-3. In the flow, edit the following tasks to provide your data:
+To train this model with your data, create a summarization folder in the S3 Connector that comprises the training file in CSV format containing text to be summarized (optional). Also, include two subdirectories that contain the model and tokenizer files, namely:
+- `default_model` − A folder with the base model to fine-tune to obtain the custom model
+- `tokenizer` − A folder with the tokenizer files to use to assist in text summarization
 
-   In the `S3 Connector` task:
-    * Under the `bucketname` parameter provide the bucket name of the data
-    * Under the `prefix` parameter provide the main path to where the training file and model/tokenizer folders are located
+NOTE: This documentation uses the Wikipedia connection and subsequent summarization as an example. The users of this blueprint can select any source of text and input it to the Batch Predict task.
 
-   In the `Train` task:
-    *  Under the `training_file` parameter provide the path to the training file including the prefix you provided in the `S3 Connector`, it should look like:
-       `/input/s3_connector/<prefix>/wiki_lingua_file.csv`
-    *  Under the `default_model` parameter provide the path to the base model including the prefix you provided in the `S3 Connector`, it should look like:
-       `/input/s3_connector/<prefix>/bart_large_cnn`
-    *  Under the `tokenizer` parameter provide the path to the tokenizer files including the prefix you provided in the `S3 Connector`, it should look like:
-       `/input/s3_connector/<prefix>/tokenizer_files`
+Complete the following steps to train the text-summarizer model:
+1. Click the **Use Blueprint** button. The cnvrg Blueprint Flow page displays.
+2. In the flow, click the **S3 Connector** task to display its dialog.
+   * Within the **Parameters** tab, provide the following Key-Value pair information:
+     * Key: `bucketname` − Value: enter the data bucket name
+     * Key: `prefix` − Value: provide the main path to the images folder
+   * Click the **Advanced** tab to change resources to run the blueprint, as required.
+3. Return to the flow and click the **Train** task to display its dialog.
+   * Within the **Parameters** tab, provide the following Key-Value pair information:
+     * Key: `training_file` − Value: provide the path to the CSV file including the S3 prefix in the following format: `/input/s3_connector/<prefix>/wiki_lingua_file.csv`
+     * Key: `default_model` − Value: provide the path to the base model including the S3 prefix in the following format: `/input/s3_connector/<prefix>/bart_large_cnn`
+     * Key: `tokenizer` − Value: provide the path to the tokenizer files including the S3 prefix in the following format: `/input/s3_connector/<prefix>/tokenizer_files`
+     NOTE: You can use prebuilt data examples paths already provided.
+   * Click the **Advanced** tab to change resources to run the blueprint, as required.
+     ![Train Advanced](../images/blueprints/text-summarization-train-train-advanced.png)
+4. Click the **Wikipedia** Connector task to display its dialog.
+   * Within the **Parameters** tab, provide the following Key-Value pair information:
+     * Key: `topics` − Value: provide the topics to extract from Wikipedia
+     * Format − use one of the following three flexible formats: comma-separated text, tabular CSV, or URL link
+   * Click the **Advanced** tab to change resources to run the blueprint, as required.
+5. Click the **Batch Predict** task to display its dialog.
+   * Within the **Parameters** tab, provide the following Key-Value pair information:
+     * Key: `input_path` − Value: provide the path to the Wikipedia Connector’s output CSV file in the following format: `/input/wikipedia_connector/wiki_ output.csv`
+     * Key: `modelpath` − Value^: provide the path to the Train task’s custom model in the following format: `/input/train/my_custom_model`
+     * Key: `tokenizer` − Value: provide the path to the S3 Connector’s tokenizer files including in the following format: `/input/s3_connector/model_files`
+     ^NOTE: The Value for the `modelpath` Key can also point to a user-defined model, not just the one trained in the Train task.
+     NOTE: You can use prebuilt data examples paths provided.
+   * Click the **Advanced** tab to change resources to run the blueprint, as required.
+6. Click the **Run** button. The cnvrg software launches the training blueprint as set of experiments, generating a trained text-summarizer model and deploying it as a new API endpoint.
+7. Track the blueprint's real-time progress in its Experiments page, which displays artifacts such as logs, metrics, hyperparameters, and algorithms.
+8. Click the **Serving** tab in the project, locate your endpoint, and complete one or both of the following options:
+   * Use the Try it Live section with any text to check the model’s ability to summarize.
+   * Use the bottom integration panel to integrate your API with your code by copying in your code snippet.
 
-**NOTE**: You can use prebuilt data examples paths that are already provided
+A custom model and an API endpoint, which can summarize text, have now been trained and deployed. If using the Batch Predict task, a custom text-summarizer model has now been deployed in batch mode.
 
-4. Click on the 'Run Flow' button
-5. In a few minutes you will train a new text summarization model and deploy as a new API endpoint
-6. Go to the 'Serving' tab in the project and look for your endpoint
-7. You can use the `Try it Live` section with any keyword or paragraph to check your model
-8. You can also integrate your API with your code using the integration panel at the bottom of the page
-
-Congrats! You have trained and deployed a custom model that summarizes custom text and wikipedia articles.
-
-[See here how we created this blueprint](https://github.com/cnvrg/text-summarization)
-
-This blueprint has four libraries
-
-0. **S3 Connector**
-1. **Text Summarization Train**
-2. **Wikipedia Connector**
-3. **Text Summarization Inference**
-
-## Text Summarization Train
-This library serves as a tool for fine-tuning a pretrained summarization model (for getting abstractive summarizations) on a pre-built dataset or a custom dataset given by the user. The dataset, wiki_lingua is actually referenced from huggingface library and contains upto 3,500 rows of articles and summaries, in English language. It’s up to the user to specify the number of rows on which they want to train their model. 
-## Text Summarization Inference
-This library serves as a tool for getting abstractive summarization of English articles without training the model further. It uses a specific model trained by CNVRG on custom data (wiki_lingua dataset) and gives summaries of around 7% of the total article size. 
-## Wikipedia Connector
-This library serves as a tool for getting the parsed text from wikipedia articles in a csv format.
-## What can you expect?
-- abstractive summaryof any article
-
-## What you need to provide?
-- training file
-    | document| summary|
-    | - | - |
-    | make sure that the area is a safe place, especially if you plan on walking home at night.| make sure that the area is safe. if you plan on walking at night.|
-
-- input file containing text or wikipedia output
-    | document| 
-    | - |
-    |The first part of the game is set in the small Sword Coast village of West Harbor, which was the site of a battle between an evil host led by an entity known as the "King of Shadows"|
-- keywords of wikipedia articles
-    'Chair'
-- hyper paramters
-    'encoder_max_length' : '256'
-
-
+Click [here](link) for this blueprint's detailed run instructions. To learn how this blueprint was created, click [here](https://github.com/cnvrg/text-summarization).

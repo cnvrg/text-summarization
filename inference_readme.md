@@ -1,24 +1,14 @@
-You can use this blueprint to immediately summarize any custom textual paragraph or wikipedia articles. For using this pretrained text summarization model, you will need to create a ready-to-use API-endpoint that can be integrated with your data and application, in minutes.
+Use this blueprint to immediately summarize English text to short sentences. To use this pretrained text-summarization model, create a ready-to-use API-endpoint that can be quickly integrated with your data and application.
 
-- Click on Use Blueprint button
-- In the pop up, choose the relevant compute you want to use to deploy your API endpoint
-- You will be redirected to your endpoint
-- You can use the Try it Live section with any image to check your model
-- You can also integrate your API with your code using the integration panel at the bottom of the page
+This inference blueprint’s model was trained using the WikiLingua Multilingual Abstractive Summarization dataset. To use custom data according to your specific business, run this counterpart’s [training blueprint](https://metacloud.staging-cloud.cnvrg.io/marketplace/blueprints/text-summarization-train), which trains the model and establishes an endpoint based on the newly trained model.
 
-Congrats! You have deployed an API endpoint that summarizes wikipedia articles and custom texts!
+Complete the following steps to deploy a text-summarization API endpoint:
+1. Click the **Use Blueprint** button.
+2. In the dialog, select the relevant compute to deploy the API endpoint and click the **Start** button.
+3. The cnvrg software redirects to your endpoint. Complete one or both of the following options:
+   - Use the Try it Live section with any text to check your model.
+   - Use the bottom integration panel to integrate your API with your code by copying in the code snippet.
 
-[See here how we created this blueprint](https://github.com/cnvrg/text-summarization)
+An API endpoint that summarizes English text has now been deployed.
 
-## About Text Summarization
-Text Summarization, aims at shortening the length of a text while still maintaining the meaning and the important topics within the text. Through this blueprint, you can simply enter a piece of text (>5 characters) that you want summary of, or merely a topic (<=5 characters) that you want summary of.
-
-It uses a pretrained model bart-large-cnn that is trained on a CNN daily mail dataset.
-### Features
-- Enter the text, that you want summary of or merely the topic name, you want summary of
-
-# Model Artifacts
-- Textual Response
-```
-A table is a wooden piece of furntiure that has been used by humans since milennia. It is used for sitting or eating. It has been found across most human cultures in history. Modern day tables range from wood to metal.
-```
+Click [here](link) for this blueprint's detailed run instructions. To learn how this blueprint was created, click [here](https://github.com/cnvrg/text-summarization).
