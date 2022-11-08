@@ -1,7 +1,7 @@
 title: Text Summarization Batch
 version: 1.0.0
-description: Generating the summary of articles given by the user via the users custom trained model
-long_description: Text Summarization is the process of reducing some text to a shorter and more concise version without distorting its meaning
+description: Use a tailored model to create text summaries from a batch of custom text files or Wikipedia articles
+long_description: Use a tailored model to create text summaries from a batch of custom text files or Wikipedia articles within a specified directory.
 author: "cnvrg"
 author_email: "libhub@cnvrg.io"
 
