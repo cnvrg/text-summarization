@@ -40,6 +40,4 @@ Complete the following steps to train the text-summarizer model:
    * Use the Try it Live section with any text to check the model’s ability to summarize.
    * Use the bottom integration panel to integrate your API with your code by copying in your code snippet.
 
-A custom model and an API endpoint, which can summarize text, have now been trained and deployed. If using the Batch Predict task, a custom text-summarizer model has now been deployed in batch mode.
-
-Click [here](link) for this blueprint's detailed run instructions. To learn how this blueprint was created, click [here](https://github.com/cnvrg/text-summarization).
+A custom model and an API endpoint, which can summarize text, have now been trained and deployed. If using the Batch Predict task, a custom text-summarizer model has now been deployed in batch mode. To learn how this blueprint was created, click [here](https://github.com/cnvrg/text-summarization).
