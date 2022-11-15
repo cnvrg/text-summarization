@@ -33,6 +33,4 @@ Complete the following steps to run the text-summarizer model in batch mode:
 7. Select **Batch Predict > Experiments > Artifacts** and locate the output CSV files.
 8. Select the desired CSV File Name, click the right menu icon, and click **Open File** to view the output CSV file.
 
-A tailored model that summarizes custom text and Wikipedia articles has now been deployed in batch mode.
-
-Click [here](link) for this blueprint's detailed run instructions. To learn how this blueprint was created, click [here](https://github.com/cnvrg/text-summarization).
+A tailored model that summarizes custom text and Wikipedia articles has now been deployed in batch mode. To learn how this blueprint was created, click [here](https://github.com/cnvrg/text-summarization).
