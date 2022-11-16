@@ -1,7 +1,7 @@
 title: Text Summarization Inference1
 version: 1.0.0
-description: Generating the summary of articles given by the user
-long_description: Text Summarization is the process of reducing some text to a shorter and more concise version without distorting its meaning
+description: Summarize English text from larger textual data sources using a pretrained model and a custom dataset.
+long_description: Summarize English text from larger textual data sources into shorter versions using a pretrained text-summarizer model and a custom dataset.
 icon: python
 
 author: "cnvrg"
